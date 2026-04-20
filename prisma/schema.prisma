@@ -1,13 +1,129 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id           String     @id @default(uuid())
+  fullName     String
+  email        String     @unique
+  username     String     @unique
+  passwordHash String
+  status       UserStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+
+  userRoles    UserRole[]
+}
+
+model Role {
+  id              String           @id @default(uuid())
+  code            String           @unique
+  name            String
+  description     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+}
+
+model Permission {
+  id              String           @id @default(uuid())
+  code            String           @unique
+  module          String
+  action          String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  rolePermissions RolePermission[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model Customer {
+  id                String         @id @default(uuid())
+  customerCode      String         @unique
+  legalName         String
+  tradeName         String?
+  taxId             String?        @unique
+  taxCondition      String?
+  email             String?
+  phone             String?
+  whatsappPhone     String?
+  addressLine       String?
+  city              String?
+  province          String?
+  country           String?        @default("Argentina")
+  postalCode        String?
+  creditLimit       Decimal?       @db.Decimal(12, 2)
+  paymentTermsDays  Int?           @default(0)
+  status            CustomerStatus @default(ACTIVE)
+  notes             String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  deletedAt         DateTime?
+}
+
+model Supplier {
+  id               String         @id @default(uuid())
+  supplierCode     String         @unique
+  legalName        String
+  tradeName        String?
+  taxId            String?        @unique
+  taxCondition     String?
+  email            String?
+  phone            String?
+  whatsappPhone    String?
+  addressLine      String?
+  city             String?
+  province         String?
+  country          String?        @default("Argentina")
+  postalCode       String?
+  defaultTermsDays Int?           @default(0)
+  status           SupplierStatus @default(ACTIVE)
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime?
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  MOROSO
+  BLOCKED
+}
+
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
 }
