@@ -1,6 +1,7 @@
+import Link from "next/link";
+
 async function getCustomers() {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "http://127.0.0.1:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://127.0.0.1:3000";
 
   const response = await fetch(`${baseUrl}/api/customers`, {
     cache: "no-store",
@@ -36,39 +37,49 @@ export default async function CustomersPage() {
         <div
           style={{
             marginBottom: "24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "end",
+            gap: "16px",
           }}
         >
-          <p
-            style={{
-              margin: 0,
-              fontSize: "12px",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              color: "#475569",
-            }}
-          >
-            Módulo inicial
-          </p>
-          <h1
-            style={{
-              marginTop: "8px",
-              marginBottom: "8px",
-              fontSize: "36px",
-              lineHeight: 1.1,
-            }}
-          >
-            Clientes
-          </h1>
-          <p
-            style={{
-              margin: 0,
-              color: "#475569",
-              fontSize: "16px",
-            }}
-          >
-            Primera vista operativa del sistema.
-          </p>
+          <div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "12px",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "#475569",
+              }}
+            >
+              Módulo inicial
+            </p>
+            <h1
+              style={{
+                marginTop: "8px",
+                marginBottom: "8px",
+                fontSize: "36px",
+                lineHeight: 1.1,
+              }}
+            >
+              Clientes
+            </h1>
+            <p
+              style={{
+                margin: 0,
+                color: "#475569",
+                fontSize: "16px",
+              }}
+            >
+              Primera vista operativa del sistema.
+            </p>
+          </div>
+
+          <Link href="/customers/new" style={buttonStyle}>
+            Nuevo cliente
+          </Link>
         </div>
 
         <div
@@ -118,7 +129,11 @@ export default async function CustomersPage() {
               ) : (
                 customers.map((customer: any) => (
                   <tr key={customer.id}>
-                    <td style={tdStyle}>{customer.customerCode}</td>
+                    <td style={tdStyle}>
+                      <Link href={`/customers/${customer.id}`} style={linkStyle}>
+                        {customer.customerCode}
+                      </Link>
+                    </td>
                     <td style={tdStyle}>{customer.legalName}</td>
                     <td style={tdStyle}>{customer.email ?? "-"}</td>
                     <td style={tdStyle}>{customer.phone ?? "-"}</td>
@@ -135,6 +150,25 @@ export default async function CustomersPage() {
     </main>
   );
 }
+
+const buttonStyle: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "42px",
+  padding: "0 16px",
+  borderRadius: "10px",
+  background: "#0f172a",
+  color: "#ffffff",
+  textDecoration: "none",
+  fontWeight: 700,
+};
+
+const linkStyle: React.CSSProperties = {
+  color: "#0f172a",
+  fontWeight: 700,
+  textDecoration: "none",
+};
 
 const thStyle: React.CSSProperties = {
   textAlign: "left",
