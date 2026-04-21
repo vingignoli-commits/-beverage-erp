@@ -1,17 +1,22 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import LogoutButton from "@/components/logout-button";
 
 export const metadata: Metadata = {
   title: "Beverage ERP",
   description: "ERP para gestión de empresa productora de bebidas",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="es">
       <body style={bodyStyle}>
@@ -37,9 +42,24 @@ export default function RootLayout({
             </div>
 
             <div style={sidebarFooterStyle}>
-              <p style={footerTextStyle}>
-                Base inicial de operación.
-              </p>
+              {session?.user ? (
+                <div style={userBoxStyle}>
+                  <p style={userEyebrowStyle}>Sesión activa</p>
+                  <p style={userNameStyle}>
+                    {session.user.name || session.user.username || session.user.email}
+                  </p>
+                  <p style={userMetaStyle}>
+                    {session.user.email || ""}
+                  </p>
+                  <div style={{ marginTop: "12px" }}>
+                    <LogoutButton />
+                  </div>
+                </div>
+              ) : (
+                <Link href="/login" style={loginLinkStyle}>
+                  Ir a login
+                </Link>
+              )}
             </div>
           </aside>
 
@@ -124,10 +144,48 @@ const sidebarFooterStyle: React.CSSProperties = {
   borderTop: "1px solid #e2e8f0",
 };
 
-const footerTextStyle: React.CSSProperties = {
+const userBoxStyle: React.CSSProperties = {
+  background: "#f8fafc",
+  border: "1px solid #e2e8f0",
+  borderRadius: "12px",
+  padding: "14px",
+};
+
+const userEyebrowStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: "11px",
+  fontWeight: 700,
+  textTransform: "uppercase",
+  letterSpacing: "0.08em",
+  color: "#64748b",
+};
+
+const userNameStyle: React.CSSProperties = {
+  marginTop: "8px",
+  marginBottom: "4px",
+  fontSize: "15px",
+  fontWeight: 700,
+  color: "#0f172a",
+};
+
+const userMetaStyle: React.CSSProperties = {
   margin: 0,
   fontSize: "13px",
   color: "#64748b",
+  wordBreak: "break-word",
+};
+
+const loginLinkStyle: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "42px",
+  padding: "0 16px",
+  borderRadius: "10px",
+  background: "#0f172a",
+  color: "#ffffff",
+  textDecoration: "none",
+  fontWeight: 700,
 };
 
 const mainWrapperStyle: React.CSSProperties = {
