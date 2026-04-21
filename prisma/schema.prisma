@@ -18,27 +18,29 @@ model User {
   updatedAt    DateTime   @updatedAt
   deletedAt    DateTime?
 
-  userRoles    UserRole[]
+  userRoles UserRole[]
 }
 
 model Role {
-  id              String           @id @default(uuid())
-  code            String           @unique
-  name            String
-  description     String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id          String     @id @default(uuid())
+  code        String     @unique
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
   userRoles       UserRole[]
   rolePermissions RolePermission[]
 }
 
 model Permission {
-  id              String           @id @default(uuid())
-  code            String           @unique
-  module          String
-  action          String
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id        String   @id @default(uuid())
+  code      String   @unique
+  module    String
+  action    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   rolePermissions RolePermission[]
 }
 
@@ -63,27 +65,27 @@ model RolePermission {
 }
 
 model Customer {
-  id                String         @id @default(uuid())
-  customerCode      String         @unique
-  legalName         String
-  tradeName         String?
-  taxId             String?        @unique
-  taxCondition      String?
-  email             String?
-  phone             String?
-  whatsappPhone     String?
-  addressLine       String?
-  city              String?
-  province          String?
-  country           String?        @default("Argentina")
-  postalCode        String?
-  creditLimit       Decimal?       @db.Decimal(12, 2)
-  paymentTermsDays  Int?           @default(0)
-  status            CustomerStatus @default(ACTIVE)
-  notes             String?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  deletedAt         DateTime?
+  id               String         @id @default(uuid())
+  customerCode     String         @unique
+  legalName        String
+  tradeName        String?
+  taxId            String?        @unique
+  taxCondition     String?
+  email            String?
+  phone            String?
+  whatsappPhone    String?
+  addressLine      String?
+  city             String?
+  province         String?
+  country          String?        @default("Argentina")
+  postalCode       String?
+  creditLimit      Decimal?       @db.Decimal(12, 2)
+  paymentTermsDays Int?           @default(0)
+  status           CustomerStatus @default(ACTIVE)
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime?
 }
 
 model Supplier {
@@ -107,6 +109,42 @@ model Supplier {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   deletedAt        DateTime?
+
+  rawMaterials RawMaterial[]
+}
+
+model Product {
+  id             String      @id @default(uuid())
+  productCode    String      @unique
+  name           String
+  description    String?
+  type           ProductType
+  unit           String
+  volumeMl       Int?
+  alcoholPercent Float?
+  isActive       Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  deletedAt      DateTime?
+
+  @@index([productCode])
+}
+
+model RawMaterial {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  name        String
+  description String?
+  unit        String
+  costPerUnit Float
+  supplierId  String?
+  supplier    Supplier? @relation(fields: [supplierId], references: [id])
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([code])
 }
 
 enum UserStatus {
@@ -126,4 +164,9 @@ enum SupplierStatus {
   ACTIVE
   INACTIVE
   BLOCKED
+}
+
+enum ProductType {
+  FINISHED
+  INTERMEDIATE
 }
