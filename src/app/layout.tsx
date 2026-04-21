@@ -32,19 +32,15 @@ export default async function RootLayout({
                 <Link href="/" style={navLinkStyle}>
                   Inicio
                 </Link>
-
                 <Link href="/customers" style={navLinkStyle}>
                   Clientes
                 </Link>
-
                 <Link href="/suppliers" style={navLinkStyle}>
                   Proveedores
                 </Link>
-
                 <Link href="/products" style={navLinkStyle}>
                   Productos
                 </Link>
-
                 <Link href="/raw-materials" style={navLinkStyle}>
                   Insumos
                 </Link>
@@ -55,17 +51,12 @@ export default async function RootLayout({
               {session?.user ? (
                 <div style={userBoxStyle}>
                   <p style={userEyebrowStyle}>Sesión activa</p>
-
                   <p style={userNameStyle}>
                     {session.user.name ||
                       session.user.username ||
                       session.user.email}
                   </p>
-
-                  <p style={userMetaStyle}>
-                    {session.user.email || ""}
-                  </p>
-
+                  <p style={userMetaStyle}>{session.user.email || ""}</p>
                   <div style={{ marginTop: "12px" }}>
                     <LogoutButton />
                   </div>

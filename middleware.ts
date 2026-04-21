@@ -2,12 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const protectedPaths = ["/", "/customers", "/suppliers"];
+const protectedPaths = ["/", "/customers", "/suppliers", "/products", "/raw-materials"];
 
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-
-  console.log("Middleware ejecutándose en:", pathname);
 
   const isProtectedPath = protectedPaths.some((path) => {
     if (path === "/") {
@@ -26,8 +24,6 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  console.log("Token encontrado:", Boolean(token));
-
   if (!token) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
@@ -38,5 +34,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/customers/:path*", "/suppliers/:path*"],
+  matcher: ["/", "/customers/:path*", "/suppliers/:path*", "/products/:path*", "/raw-materials/:path*"],
 };
