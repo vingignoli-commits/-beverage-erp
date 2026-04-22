@@ -22,12 +22,12 @@ model User {
 }
 
 model Role {
-  id          String     @id @default(uuid())
-  code        String     @unique
+  id          String   @id @default(uuid())
+  code        String   @unique
   name        String
   description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   userRoles       UserRole[]
   rolePermissions RolePermission[]
@@ -127,7 +127,8 @@ model Product {
   updatedAt      DateTime    @updatedAt
   deletedAt      DateTime?
 
-  recipes Recipe[]
+  recipes        Recipe[]
+  stockMovements StockMovement[]
 
   @@index([productCode])
 }
@@ -146,21 +147,22 @@ model RawMaterial {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
-  recipeItems RecipeItem[]
+  recipeItems    RecipeItem[]
+  stockMovements StockMovement[]
 
   @@index([code])
 }
 
 model Recipe {
-  id          String   @id @default(uuid())
-  code        String   @unique
+  id          String    @id @default(uuid())
+  code        String    @unique
   name        String
   description String?
   productId   String
-  product     Product  @relation(fields: [productId], references: [id])
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  product     Product   @relation(fields: [productId], references: [id])
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
   items RecipeItem[]
@@ -169,7 +171,7 @@ model Recipe {
 }
 
 model RecipeItem {
-  id            String      @id @default(uuid())
+  id            String  @id @default(uuid())
   recipeId      String
   rawMaterialId String
   quantity      Float
@@ -183,6 +185,28 @@ model RecipeItem {
 
   @@index([recipeId])
   @@index([rawMaterialId])
+}
+
+model StockMovement {
+  id            String            @id @default(uuid())
+  movementType  StockMovementType
+  entityType    StockEntityType
+  rawMaterialId String?
+  productId     String?
+  quantity      Float
+  unitCost      Float?
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  rawMaterial RawMaterial? @relation(fields: [rawMaterialId], references: [id])
+  product     Product?     @relation(fields: [productId], references: [id])
+
+  @@index([entityType])
+  @@index([movementType])
+  @@index([rawMaterialId])
+  @@index([productId])
+  @@index([createdAt])
 }
 
 enum UserStatus {
@@ -207,4 +231,15 @@ enum SupplierStatus {
 enum ProductType {
   FINISHED
   INTERMEDIATE
+}
+
+enum StockEntityType {
+  RAW_MATERIAL
+  PRODUCT
+}
+
+enum StockMovementType {
+  IN
+  OUT
+  ADJUSTMENT
 }

@@ -47,6 +47,9 @@ export default async function RootLayout({
                 <Link href="/recipes" style={navLinkStyle}>
                   Recetas
                 </Link>
+                <Link href="/stock" style={navLinkStyle}>
+                  Stock
+                </Link>
               </nav>
             </div>
 
