@@ -127,6 +127,8 @@ model Product {
   updatedAt      DateTime    @updatedAt
   deletedAt      DateTime?
 
+  recipes Recipe[]
+
   @@index([productCode])
 }
 
@@ -144,7 +146,43 @@ model RawMaterial {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
+  recipeItems RecipeItem[]
+
   @@index([code])
+}
+
+model Recipe {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  items RecipeItem[]
+
+  @@index([code])
+}
+
+model RecipeItem {
+  id            String      @id @default(uuid())
+  recipeId      String
+  rawMaterialId String
+  quantity      Float
+  notes         String?
+
+  recipe      Recipe      @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  rawMaterial RawMaterial @relation(fields: [rawMaterialId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recipeId])
+  @@index([rawMaterialId])
 }
 
 enum UserStatus {

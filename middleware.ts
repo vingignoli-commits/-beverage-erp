@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const protectedPaths = ["/", "/customers", "/suppliers", "/products", "/raw-materials"];
+const protectedPaths = [
+  "/",
+  "/customers",
+  "/suppliers",
+  "/products",
+  "/raw-materials",
+  "/recipes",
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -34,5 +41,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/customers/:path*", "/suppliers/:path*", "/products/:path*", "/raw-materials/:path*"],
+  matcher: [
+    "/",
+    "/customers/:path*",
+    "/suppliers/:path*",
+    "/products/:path*",
+    "/raw-materials/:path*",
+    "/recipes/:path*",
+  ],
 };
