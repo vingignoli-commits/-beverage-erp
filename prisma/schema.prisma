@@ -87,7 +87,8 @@ model Customer {
   updatedAt        DateTime       @updatedAt
   deletedAt        DateTime?
 
-  salesOrders SalesOrder[]
+  salesOrders      SalesOrder[]
+  financialEntries FinancialEntry[]
 }
 
 model Supplier {
@@ -112,7 +113,8 @@ model Supplier {
   updatedAt        DateTime       @updatedAt
   deletedAt        DateTime?
 
-  rawMaterials RawMaterial[]
+  rawMaterials     RawMaterial[]
+  financialEntries FinancialEntry[]
 }
 
 model Product {
@@ -279,6 +281,34 @@ model SalesOrderItem {
   @@index([productId])
 }
 
+model FinancialEntry {
+  id           String               @id @default(uuid())
+  code         String               @unique
+  type         FinancialEntryType
+  concept      String
+  amount       Float
+  status       FinancialEntryStatus @default(PENDING)
+  dueDate      DateTime?
+  paidAt       DateTime?
+  notes        String?
+  customerId   String?
+  supplierId   String?
+  salesOrderId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer Customer? @relation(fields: [customerId], references: [id])
+  supplier Supplier? @relation(fields: [supplierId], references: [id])
+
+  @@index([code])
+  @@index([type])
+  @@index([status])
+  @@index([customerId])
+  @@index([supplierId])
+  @@index([dueDate])
+}
+
 enum UserStatus {
   ACTIVE
   INACTIVE
@@ -323,5 +353,16 @@ enum ProductionOrderStatus {
 enum SalesOrderStatus {
   DRAFT
   CONFIRMED
+  CANCELLED
+}
+
+enum FinancialEntryType {
+  INCOME
+  EXPENSE
+}
+
+enum FinancialEntryStatus {
+  PENDING
+  PAID
   CANCELLED
 }

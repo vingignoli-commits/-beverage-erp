@@ -56,6 +56,15 @@ export default async function RootLayout({
                 <Link href="/sales-orders" style={navLinkStyle}>
                   Ventas
                 </Link>
+                <Link href="/financial" style={navLinkStyle}>
+                  Finanzas
+                </Link>
+                <Link href="/accounts-receivable" style={navLinkStyle}>
+                  CxC
+                </Link>
+                <Link href="/accounts-payable" style={navLinkStyle}>
+                  CxP
+                </Link>
               </nav>
             </div>
 
