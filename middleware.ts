@@ -11,6 +11,7 @@ const protectedPaths = [
   "/recipes",
   "/stock",
   "/production-orders",
+  "/sales-orders",
 ];
 
 export async function middleware(request: NextRequest) {
@@ -52,5 +53,6 @@ export const config = {
     "/recipes/:path*",
     "/stock/:path*",
     "/production-orders/:path*",
+    "/sales-orders/:path*",
   ],
 };

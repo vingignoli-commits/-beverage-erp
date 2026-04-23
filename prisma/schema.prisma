@@ -86,6 +86,8 @@ model Customer {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   deletedAt        DateTime?
+
+  salesOrders SalesOrder[]
 }
 
 model Supplier {
@@ -130,6 +132,7 @@ model Product {
   recipes          Recipe[]
   stockMovements   StockMovement[]
   productionOrders ProductionOrder[]
+  salesOrderItems  SalesOrderItem[]
 
   @@index([productCode])
 }
@@ -196,6 +199,7 @@ model StockMovement {
   rawMaterialId     String?
   productId         String?
   productionOrderId String?
+  salesOrderId      String?
   quantity          Float
   unitCost          Float?
   notes             String?
@@ -205,12 +209,14 @@ model StockMovement {
   rawMaterial     RawMaterial?     @relation(fields: [rawMaterialId], references: [id])
   product         Product?         @relation(fields: [productId], references: [id])
   productionOrder ProductionOrder? @relation(fields: [productionOrderId], references: [id])
+  salesOrder      SalesOrder?      @relation(fields: [salesOrderId], references: [id])
 
   @@index([entityType])
   @@index([movementType])
   @@index([rawMaterialId])
   @@index([productId])
   @@index([productionOrderId])
+  @@index([salesOrderId])
   @@index([createdAt])
 }
 
@@ -232,6 +238,44 @@ model ProductionOrder {
 
   @@index([code])
   @@index([recipeId])
+  @@index([productId])
+}
+
+model SalesOrder {
+  id          String           @id @default(uuid())
+  code        String           @unique
+  customerId  String
+  status      SalesOrderStatus @default(DRAFT)
+  totalAmount Float            @default(0)
+  notes       String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  confirmedAt DateTime?
+
+  customer       Customer         @relation(fields: [customerId], references: [id])
+  items          SalesOrderItem[]
+  stockMovements StockMovement[]
+
+  @@index([code])
+  @@index([customerId])
+  @@index([status])
+}
+
+model SalesOrderItem {
+  id           String @id @default(uuid())
+  salesOrderId String
+  productId    String
+  quantity     Float
+  unitPrice    Float
+  lineTotal    Float
+
+  salesOrder SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([salesOrderId])
   @@index([productId])
 }
 
@@ -273,5 +317,11 @@ enum StockMovementType {
 enum ProductionOrderStatus {
   DRAFT
   EXECUTED
+  CANCELLED
+}
+
+enum SalesOrderStatus {
+  DRAFT
+  CONFIRMED
   CANCELLED
 }

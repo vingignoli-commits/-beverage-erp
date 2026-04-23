@@ -53,6 +53,9 @@ export default async function RootLayout({
                 <Link href="/production-orders" style={navLinkStyle}>
                   Producción
                 </Link>
+                <Link href="/sales-orders" style={navLinkStyle}>
+                  Ventas
+                </Link>
               </nav>
             </div>
 
