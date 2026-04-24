@@ -105,13 +105,14 @@ export default async function RawMaterialsPage() {
                 <th style={thStyle}>Costo por unidad</th>
                 <th style={thStyle}>Proveedor</th>
                 <th style={thStyle}>Activo</th>
+                <th style={thStyle}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {materials.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     style={{
                       padding: "24px",
                       textAlign: "center",
@@ -132,6 +133,14 @@ export default async function RawMaterialsPage() {
                       {material.supplier?.legalName ?? "-"}
                     </td>
                     <td style={tdStyle}>{material.isActive ? "Sí" : "No"}</td>
+                    <td style={tdStyle}>
+                      <Link
+                        href={`/raw-materials/${material.id}/edit`}
+                        style={linkStyle}
+                      >
+                        Editar
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}
@@ -154,6 +163,12 @@ const buttonStyle: React.CSSProperties = {
   color: "#ffffff",
   textDecoration: "none",
   fontWeight: 700,
+};
+
+const linkStyle: React.CSSProperties = {
+  color: "#0f172a",
+  fontWeight: 700,
+  textDecoration: "none",
 };
 
 const thStyle: React.CSSProperties = {
