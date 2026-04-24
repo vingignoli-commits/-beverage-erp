@@ -223,24 +223,26 @@ model StockMovement {
 }
 
 model ProductionOrder {
-  id                String                @id @default(uuid())
-  code              String                @unique
+  id                String @id @default(uuid())
+  code              String @unique
   recipeId          String
   productId         String
   quantityToProduce Float
-  status            ProductionOrderStatus @default(DRAFT)
-  notes             String?
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
-  executedAt        DateTime?
+
+  totalCost Float? // costo total real
+  unitCost  Float? // costo por unidad real
+
+  status     ProductionOrderStatus @default(DRAFT)
+  notes      String?
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+  executedAt DateTime?
 
   recipe         Recipe          @relation(fields: [recipeId], references: [id])
   product        Product         @relation(fields: [productId], references: [id])
   stockMovements StockMovement[]
 
   @@index([code])
-  @@index([recipeId])
-  @@index([productId])
 }
 
 model SalesOrder {

@@ -15,6 +15,7 @@ const protectedPaths = [
   "/financial",
   "/accounts-receivable",
   "/accounts-payable",
+  "/pricing",
 ];
 
 export async function middleware(request: NextRequest) {
@@ -60,5 +61,6 @@ export const config = {
     "/financial/:path*",
     "/accounts-receivable/:path*",
     "/accounts-payable/:path*",
+    "/pricing/:path*",
   ],
 };
